@@ -65,7 +65,7 @@ function renderResults(results) {
                         <i class="material-icons copy-icon" onclick="copyToClipboard('${result.SAP}')">content_copy</i>
                         </li>
                         <li><strong>Ciudad:</strong> ${result.CIUDAD || 'N/A'}</li>
-                        <li><strong>Dirección:</strong> ${result.DIRECCION || 'N/A'}</li>
+                        <li><strong>Dirección:</strong> ${result.DIRECION || 'N/A'}</li>
 
                     </ul>
                 </div>
