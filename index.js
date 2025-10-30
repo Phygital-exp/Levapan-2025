@@ -11,7 +11,7 @@ const AUTH_HEADERS = {
 
 app.use(cors());
 
-app.get("/api/levapan/pdv", async (req, res) => {
+app.get("/api/Levapan/pdv", async (req, res) => {
     try {
         const response = await fetch(
             "https://botai.smartdataautomation.com/api_backend_ai/dinamic-db/report/119/Levapan_PDVs",
