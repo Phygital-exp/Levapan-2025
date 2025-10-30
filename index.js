@@ -20,8 +20,8 @@ app.get("/api/levapan/pdv", async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (err) {
-        console.error("Error en el proxy pork PDV:", err);
-        res.status(500).json({ error: "Error al obtener datos de pork PDV" });
+        console.error("Error en el proxy levapan PDV:", err);
+        res.status(500).json({ error: "Error al obtener datos de levapan PDV" });
     }
 });
 
