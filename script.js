@@ -2,7 +2,7 @@ let debounceTimer;
 let fuse = null;
 let fullData = [];
 
-const API_URL = 'https://levapan-production.up.railway.app/api/levapan/pdv';
+const API_URL = 'https://levapan-production.up.railway.app/api/Levapan/pdv';
 
 // Cargar los datos de la API
 async function loadData() {
