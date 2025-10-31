@@ -4,65 +4,57 @@ let fullData = [];
 let filteredData = [];
 let currentChannel = '';
 
-// URL de la API que contiene todos los datos
-const API_URL = 'https://levapan-production.up.railway.app/api/Levapan/pdv';
+// URL base de la API
+const API_BASE_URL = 'https://levapan-production.up.railway.app/api/Levapan/pdv';
 
-// Cargar todos los datos de la API una sola vez
-async function loadData() {
+// Cargar datos de la API según el canal seleccionado
+async function loadData(channel = '') {
     try {
-        console.log("Cargando todos los datos desde la API...");
+        // Determinar qué API usar según el canal
+        let apiUrl = API_BASE_URL;
+        if (channel === 'Independiente') {
+            apiUrl = `${API_BASE_URL}?tipo=independiente`;
+        }
+        // Para 'Moderno' o sin selección, usar la API por defecto
+        
+        console.log(`Cargando datos desde: ${apiUrl}`);
         
         // Mostrar indicador de carga
-        showLoadingState();
+        showLoadingState(channel);
         
-        const response = await fetch(API_URL);
+        const response = await fetch(apiUrl);
         
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
         
         const data = await response.json();
         fullData = data.result || [];
+        filteredData = fullData; // Los datos ya vienen filtrados desde el backend
+        currentChannel = channel;
 
-        console.log("Datos cargados correctamente:", fullData);
+        console.log(`Datos cargados para ${channel || 'todos los canales'}:`, fullData.length, 'registros');
         
         // Ocultar indicador de carga
         hideLoadingState();
         
-        // Inicializar con todos los datos
-        filteredData = fullData;
+        // Inicializar búsqueda
         initializeFuse();
         
         // Limpiar resultados anteriores
         document.getElementById('results').innerHTML = '';
         
+        // Mostrar mensaje informativo
+        if (channel) {
+            showChannelInfo(channel, fullData.length);
+        }
+        
     } catch (error) {
         console.error("Error al cargar los datos:", error);
         hideLoadingState();
-        showError("No se pudieron cargar los datos. Inténtalo más tarde.");
+        showError(`No se pudieron cargar los datos${channel ? ' para ' + channel : ''}. Inténtalo más tarde.`);
     }
 }
 
-// Filtrar datos por canal seleccionado
-function filterDataByChannel(channel) {
-    if (!channel) {
-        // Sin filtro, usar todos los datos
-        filteredData = fullData;
-        currentChannel = '';
-    } else {
-        // Filtrar por canal de distribución
-        filteredData = fullData.filter(item => 
-            item['CANAL DISTRIBUCION'] && 
-            item['CANAL DISTRIBUCION'].toString().toLowerCase().includes(channel.toLowerCase())
-        );
-        currentChannel = channel;
-    }
-    
-    // Reinicializar Fuse con los datos filtrados
-    initializeFuse();
-    
-    console.log(`Datos filtrados para ${channel || 'todos los canales'}:`, filteredData.length, 'elementos');
-}
-
-// Inicializar Fuse.js para búsqueda rápida con datos filtrados
+// Inicializar Fuse.js para búsqueda rápida
 function initializeFuse() {
     const options = {
         keys: ['SAP','NIT','CODIGO CLIENTE','GRUPO VENDEDOR','CANAL DISTRIBUCION','RAZON SOCIAL','NOMBRE','DIRECCION','BARRIO','POBLACION','SUBGRUPO'],
@@ -79,7 +71,7 @@ function handleInput() {
     }, 300);
 }
 
-// Realizar búsqueda en los datos filtrados por canal
+// Realizar búsqueda en los datos cargados
 function performFilteredSearch() {
     const query = document.getElementById('searchInput').value.trim();
     
@@ -90,32 +82,22 @@ function performFilteredSearch() {
     } else if (query === '') {
         // Limpiar resultados si no hay búsqueda
         document.getElementById('results').innerHTML = '';
+        // Volver a mostrar el mensaje informativo si hay canal seleccionado
+        if (currentChannel) {
+            showChannelInfo(currentChannel, filteredData.length);
+        }
     }
 }
 
 // Manejo del cambio en el selector de canal
-function handleChannelChange() {
+async function handleChannelChange() {
     const selectedChannel = document.getElementById('channelSelector').value;
     
     // Limpiar el input de búsqueda
     document.getElementById('searchInput').value = '';
     
-    // Filtrar datos por canal seleccionado
-    filterDataByChannel(selectedChannel);
-    
-    // Limpiar resultados de búsqueda
-    document.getElementById('results').innerHTML = '';
-    
-    // Mostrar mensaje informativo sobre el filtro aplicado
-    if (selectedChannel) {
-        const count = filteredData.length;
-        document.getElementById('results').innerHTML = `
-            <div class="info-message">
-                <p>📊 Filtrado por canal: <strong>${selectedChannel}</strong></p>
-                <p>Se encontraron <strong>${count}</strong> registros disponibles para búsqueda</p>
-            </div>
-        `;
-    }
+    // Cargar datos del canal seleccionado
+    await loadData(selectedChannel);
 }
 
 // Renderizar los resultados en HTML con animaciones
@@ -153,12 +135,12 @@ function copyToClipboard(text) {
 }
 
 // Mostrar estado de carga
-function showLoadingState() {
+function showLoadingState(channel = '') {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
         <div class="loading-state">
             <div class="spinner"></div>
-            <p>Cargando datos${currentChannel ? ' de ' + currentChannel : ''}...</p>
+            <p>Cargando datos${channel ? ' de ' + channel : ''}...</p>
         </div>
     `;
 }
@@ -166,6 +148,16 @@ function showLoadingState() {
 // Ocultar estado de carga
 function hideLoadingState() {
     // El estado se limpia cuando se muestran los resultados o errores
+}
+
+// Mostrar información del canal seleccionado
+function showChannelInfo(channel, count) {
+    document.getElementById('results').innerHTML = `
+        <div class="info-message">
+            <p>📊 Canal seleccionado: <strong>${channel}</strong></p>
+            <p>Se cargaron <strong>${count}</strong> registros disponibles para búsqueda</p>
+        </div>
+    `;
 }
 
 // Mostrar error
