@@ -108,13 +108,14 @@ function renderResults(results) {
         results.forEach(result => {
             output += `
                 <div class="result-item">
-                    <h3>${result.PDV}</h3>
+                    <h3>${result.NOMBRE}</h3>
                     <ul>
                         <li><strong>SAP:</strong> ${result.SAP || 'N/A'}
                         <i class="material-icons copy-icon" onclick="copyToClipboard('${result.SAP}')">content_copy</i>
                         </li>
-                        <li><strong>Ciudad:</strong> ${result.CIUDAD || 'N/A'}</li>
-                        <li><strong>Dirección:</strong> ${result.DIRECION || 'N/A'}</li>
+                        <li><strong>Ciudad:</strong> ${result.POBLACION || 'N/A'}</li>
+                        <li><strong>Barrio:</strong> ${result.BARRIO || 'N/A'}</li>
+                        <li><strong>Dirección:</strong> ${result.DIRECCION || 'N/A'}</li>
 
                     </ul>
                 </div>
