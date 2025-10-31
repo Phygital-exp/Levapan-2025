@@ -21,11 +21,18 @@
 
     <div class="container">
         <div class="search-container">
-            Búsqueda de PDVs
+            Búsqueda datos Midea
             <br>
-            <button id="darkModeToggle" class="btn btn-dark">🌙 Modo Oscuro</button>
+            <button id="darkModeToggle" class="btn btn-dark">🌙 Modo claro</button>
 
-            <input type="text" id="searchInput" class="form-control mt-3" placeholder="Palabra clave" oninput="handleInput()">
+            <!-- Dropdown selector -->
+            <select id="channelSelector" class="form-select mt-3">
+                <option value="">Seleccione</option>
+                <option value="Moderno">Moderno</option>
+                <option value="Independiente">Independiente</option>
+            </select>
+
+            <input type="text" id="searchInput" class="form-control mt-3" placeholder="Ingresa palabra clave del PDV" oninput="handleInput()">
             
             <div id="results"></div>
         </div>

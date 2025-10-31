@@ -90,8 +90,9 @@ h1 {
     background: #ddd;
 }
 
-/* Input de búsqueda */
-.search-container input[type="text"] {
+/* Input de búsqueda y selector */
+.search-container input[type="text"],
+.search-container select {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -100,10 +101,25 @@ h1 {
     outline: none;
     transition: border-color 0.3s;
     margin-top: 10px;
+    background-color: white;
 }
 
-.search-container input[type="text"]:focus {
+.search-container input[type="text"]:focus,
+.search-container select:focus {
     border-color: #2980b9;
+}
+
+/* Estilos específicos para el selector en modo oscuro */
+.dark-mode .search-container select {
+    background-color: #333;
+    color: white;
+    border-color: #555;
+}
+
+.dark-mode .search-container input[type="text"] {
+    background-color: #333;
+    color: white;
+    border-color: #555;
 }
 
 /* Contenedor de Resultados */
@@ -159,6 +175,78 @@ h1 {
 
 .material-icons.copy-icon:hover {
     color: #2c3e50;
+}
+
+/* Estados de carga y error */
+.loading-state, .error-state, .info-message {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.dark-mode .loading-state, 
+.dark-mode .error-state,
+.dark-mode .info-message {
+    background-color: #333;
+}
+
+.info-message {
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 20px;
+}
+
+.dark-mode .info-message {
+    background-color: #1e3a5f;
+    border-left-color: #64b5f6;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+.dark-mode .spinner {
+    border-color: #555;
+    border-top-color: #3498db;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+.loading-state p, .error-state p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+}
+
+.info-message p {
+    color: #1976d2;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.dark-mode .loading-state p, 
+.dark-mode .error-state p {
+    color: #ccc;
+}
+
+.dark-mode .info-message p {
+    color: #90caf9;
 }
 
 /* Responsividad para diferentes tamaños de pantalla */
