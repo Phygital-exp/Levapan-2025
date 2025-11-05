@@ -57,7 +57,7 @@ async function loadData(channel = '') {
 // Inicializar Fuse.js para búsqueda rápida
 function initializeFuse() {
     const options = {
-        keys: ['SAP','CANAL','REGIÓN','CIUDAD','PDV','DIRECCIÓN','BARRIO'],
+        keys: ['SAP','CANAL ','REGIÓN ','CIUDAD ','PDV ','DIRECCIÓN','BARRIO '],
         threshold: 0.3,
     };
     fuse = new Fuse(filteredData, options);
