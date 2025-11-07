@@ -57,7 +57,7 @@ async function loadData(channel = '') {
 // Inicializar Fuse.js para búsqueda rápida
 function initializeFuse() {
     const options = {
-        keys: ['SAP','CANAL ','REGIÓN ','CIUDAD ','PDV ','DIRECCIÓN','BARRIO '],
+        keys: ['SAP','CANAL ','REGION ','CIUDAD ','PDV ','DIRECCION','BARRIO ','CADENA '],
         threshold: 0.3,
     };
     fuse = new Fuse(filteredData, options);
@@ -115,9 +115,10 @@ function renderResults(results) {
                         </li>
                         <li><strong>Ciudad:</strong> ${result['CIUDAD '] || 'N/A'}</li>
                         <li><strong>Barrio:</strong> ${result['BARRIO '] || 'N/A'}</li>
-                        <li><strong>Dirección:</strong> ${result['DIRECCIÓN'] || 'N/A'}</li>
-                        <li><strong>Región:</strong> ${result['REGIÓN '] || 'N/A'}</li>
+                        <li><strong>Dirección:</strong> ${result['DIRECCION'] || 'N/A'}</li>
+                        <li><strong>Región:</strong> ${result['REGION '] || 'N/A'}</li>
                         <li><strong>Canal:</strong> ${result['CANAL '] || 'N/A'}</li>
+                        <li><strong>Cadena:</strong> ${result['CADENA '] || 'N/A'}</li>
 
                     </ul>
                 </div>
