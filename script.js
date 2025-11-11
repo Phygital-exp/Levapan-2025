@@ -90,7 +90,8 @@ function renderResults(results) {
                         </li>
                         <li><strong>NIT:</strong> ${result.NIT || 'N/A'}</li>
                         <li><strong>Código Cliente:</strong> ${result.CODIGOCLIENTE || 'N/A'}</li>
-                        <li><strong>Ciudad:</strong> ${result.CIUDAD || 'N/A'}</li>
+                        <li><strong>Distrito:</strong> ${result.CIUDAD || 'N/A'}</li>
+                        <li><strong>Población:</strong> ${result.POBLACION || 'N/A'}</li>
                         <li><strong>Barrio:</strong> ${result.BARRIO || 'N/A'}</li>
                         <li><strong>Dirección:</strong> ${result.DIRECCION || 'N/A'}</li>
                         <li><strong>Región:</strong> ${result.REGION || 'N/A'}</li>
