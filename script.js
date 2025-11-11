@@ -8,19 +8,14 @@ let currentChannel = '';
 const API_BASE_URL = 'https://levapan-production.up.railway.app/api/Levapan/pdv';
 
 // Cargar datos de la API según el canal seleccionado
-async function loadData(channel = '') {
+async function loadData() {
     try {
-        // Determinar qué API usar según el canal
-        let apiUrl = API_BASE_URL;
-        if (channel === 'Independiente') {
-            apiUrl = `${API_BASE_URL}?tipo=independiente`;
-        }
-        // Para 'Moderno' o sin selección, usar la API por defecto
+        const apiUrl = API_BASE_URL;
         
         console.log(`Cargando datos desde: ${apiUrl}`);
         
         // Mostrar indicador de carga
-        showLoadingState(channel);
+        showLoadingState();
         
         const response = await fetch(apiUrl);
         
@@ -29,9 +24,9 @@ async function loadData(channel = '') {
         const data = await response.json();
         fullData = data.result || [];
         filteredData = fullData; // Los datos ya vienen filtrados desde el backend
-        currentChannel = channel;
+        currentChannel = '';
 
-        console.log(`Datos cargados para ${channel || 'todos los canales'}:`, fullData.length, 'registros');
+        console.log(`Datos cargados:`, fullData.length, 'registros');
         
         // Ocultar indicador de carga
         hideLoadingState();
@@ -42,22 +37,17 @@ async function loadData(channel = '') {
         // Limpiar resultados anteriores
         document.getElementById('results').innerHTML = '';
         
-        // Mostrar mensaje informativo
-        if (channel) {
-            showChannelInfo(channel, fullData.length);
-        }
-        
     } catch (error) {
         console.error("Error al cargar los datos:", error);
         hideLoadingState();
-        showError(`No se pudieron cargar los datos${channel ? ' para ' + channel : ''}. Inténtalo más tarde.`);
+        showError(`No se pudieron cargar los datos. Inténtalo más tarde.`);
     }
 }
 
 // Inicializar Fuse.js para búsqueda rápida
 function initializeFuse() {
     const options = {
-        keys: ['SAP','CANAL ','REGION ','CIUDAD ','PDV ','DIRECCION','BARRIO ','CADENA '],
+        keys: ['NIT','CODIGOCLIENTE','SAP','GRUPO VENDEDOR','REGION','CIUDAD','CANAL','RAZON SOCIAL','PDV','DIRECCION','BARRIO','POBLACION','SUBGRUPO'],
         threshold: 0.3,
     };
     fuse = new Fuse(filteredData, options);
@@ -82,22 +72,7 @@ function performFilteredSearch() {
     } else if (query === '') {
         // Limpiar resultados si no hay búsqueda
         document.getElementById('results').innerHTML = '';
-        // Volver a mostrar el mensaje informativo si hay canal seleccionado
-        if (currentChannel) {
-            showChannelInfo(currentChannel, filteredData.length);
-        }
     }
-}
-
-// Manejo del cambio en el selector de canal
-async function handleChannelChange() {
-    const selectedChannel = document.getElementById('channelSelector').value;
-    
-    // Limpiar el input de búsqueda
-    document.getElementById('searchInput').value = '';
-    
-    // Cargar datos del canal seleccionado
-    await loadData(selectedChannel);
 }
 
 // Renderizar los resultados en HTML con animaciones
@@ -108,17 +83,19 @@ function renderResults(results) {
         results.forEach(result => {
             output += `
                 <div class="result-item">
-                    <h3>${result['PDV '] || 'N/A'}</h3>
+                    <h3>${result.PDV || 'N/A'}</h3>
                     <ul>
                         <li><strong>SAP:</strong> ${result.SAP || 'N/A'}
                         <i class="material-icons copy-icon" onclick="copyToClipboard('${result.SAP}')">content_copy</i>
                         </li>
-                        <li><strong>Ciudad:</strong> ${result['CIUDAD '] || 'N/A'}</li>
-                        <li><strong>Barrio:</strong> ${result['BARRIO '] || 'N/A'}</li>
-                        <li><strong>Dirección:</strong> ${result['DIRECCION'] || 'N/A'}</li>
-                        <li><strong>Región:</strong> ${result['REGION '] || 'N/A'}</li>
-                        <li><strong>Canal:</strong> ${result['CANAL '] || 'N/A'}</li>
-                        <li><strong>Cadena:</strong> ${result['CADENA '] || 'N/A'}</li>
+                        <li><strong>NIT:</strong> ${result.NIT || 'N/A'}</li>
+                        <li><strong>Código Cliente:</strong> ${result.CODIGOCLIENTE || 'N/A'}</li>
+                        <li><strong>Ciudad:</strong> ${result.CIUDAD || 'N/A'}</li>
+                        <li><strong>Barrio:</strong> ${result.BARRIO || 'N/A'}</li>
+                        <li><strong>Dirección:</strong> ${result.DIRECCION || 'N/A'}</li>
+                        <li><strong>Región:</strong> ${result.REGION || 'N/A'}</li>
+                        <li><strong>Canal:</strong> ${result.CANAL || 'N/A'}</li>
+                        <li><strong>Razón Social:</strong> ${result['RAZON SOCIAL'] || 'N/A'}</li>
 
                     </ul>
                 </div>
@@ -139,12 +116,12 @@ function copyToClipboard(text) {
 }
 
 // Mostrar estado de carga
-function showLoadingState(channel = '') {
+function showLoadingState() {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = `
         <div class="loading-state">
             <div class="spinner"></div>
-            <p>Cargando datos${channel ? ' de ' + channel : ''}...</p>
+            <p>Cargando datos...</p>
         </div>
     `;
 }
@@ -152,16 +129,6 @@ function showLoadingState(channel = '') {
 // Ocultar estado de carga
 function hideLoadingState() {
     // El estado se limpia cuando se muestran los resultados o errores
-}
-
-// Mostrar información del canal seleccionado
-function showChannelInfo(channel, count) {
-    document.getElementById('results').innerHTML = `
-        <div class="info-message">
-            <p>📊 Canal seleccionado: <strong>${channel}</strong></p>
-            <p>Se cargaron <strong>${count}</strong> registros disponibles para búsqueda</p>
-        </div>
-    `;
 }
 
 // Mostrar error
@@ -183,9 +150,6 @@ document.getElementById("darkModeToggle").addEventListener("click", function() {
     const isDarkMode = document.body.classList.contains("dark-mode");
     this.innerHTML = isDarkMode ? "☀️ Modo claro" : "🌙 Modo oscuro";
 });
-
-// Event listener para el selector de canal
-document.getElementById("channelSelector").addEventListener("change", handleChannelChange);
 
 // Cargar datos al inicio
 loadData();
